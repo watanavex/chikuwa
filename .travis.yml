@@ -1,0 +1,11 @@
+language: ruby
+cache:
+  directories:
+    - bundle
+
+rvm:
+  - 2.6
+  - 2.7
+
+script:
+    - bundle exec rake spec
