@@ -1,34 +1,95 @@
 # frozen_string_literal: true
 
 module Danger
-  # This is your plugin class. Any attributes or methods you expose here will
-  # be available from within your Dangerfile.
-  #
-  # To be published on the Danger plugins site, you will need to have
-  # the public interface documented. Danger uses [YARD](http://yardoc.org/)
-  # for generating documentation from your plugin source, and you can verify
-  # by running `danger plugins lint` or `bundle exec rake spec`.
-  #
-  # You should replace these comments with a public description of your library.
-  #
-  # @example Ensure people are well warned about merging on Mondays
-  #
-  #          my_plugin.warn_on_mondays
-  #
-  # @see  watanavex/danger-chikuwa
-  # @tags monday, weekends, time, rattata
-  #
   class DangerChikuwa < Plugin
-    # An attribute that you can read/write from your Dangerfile
-    #
-    # @return   [Array<String>]
-    attr_accessor :my_attribute
+    attr_accessor :project_root, :inline_mode
 
-    # A method that you can call from your Dangerfile
-    # @return   [Array<String>]
-    #
-    def warn_on_mondays
-      warn "Trying to merge code on a Monday" if Date.today.wday == 1
+    def _project_root
+      root = @project_root || Dir.pwd
+      root += "/" unless root.end_with? "/"
+      root
+    end
+
+    def _inline_mode
+      @inline_mode || false
+    end
+
+    def report(file_path)
+      if File.exist?(file_path)
+        results = parse_build_log(file_path)
+        send_reports(results)
+      else
+        fail "build log file not found"
+      end
+    end
+
+    private
+
+    module Type
+      WARN = "w"
+      ERROR = "e"
+    end
+
+    class ReportData
+      attr_accessor :message, :type, :file, :line
+
+      def initialize(message, type, file, line)
+        self.message = message
+        self.type = type
+        self.file = file
+        self.line = line
+      end
+    end
+
+    def parse_build_log(file_path)
+      report_data = []
+      File.foreach(file_path) do |line|
+        logs = line.split(":")
+        if logs.length < 4
+          next
+        end
+
+        case logs[0]
+        when "w"
+          type = Type::WARN
+        when "e"
+          type = Type::ERROR
+        else
+          next
+        end
+
+        file = Pathname(logs[1].strip).relative_path_from(_project_root).to_s
+        line_num = /(\d+)/.match(logs[2].strip).to_a[0].to_i
+        logs.shift(3)
+        message = logs.join(":").strip!
+
+        report_data.push(ReportData.new(message, type, file, line_num))
+      end
+
+      return report_data
+    end
+
+    def send_reports(results)
+      results.each do |data|
+        send(data)
+      end
+    end
+
+    def send(data)
+      case data.type
+      when Type::WARN
+        if _inline_mode
+          warn(data.message, file: data.file, line: data.line)
+        else
+          warn(data.message)
+        end
+      when Type::ERROR
+        if _inline_mode
+          failure(data.message, file: data.file, line: data.line)
+        else
+          failure(data.message)
+        end
+      end
     end
   end
 end
