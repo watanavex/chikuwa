@@ -41,3 +41,8 @@ https://github.com/watanavex/android-check-for-chikuwa/pull/5
 3. Run `bundle exec rake spec` to run the tests.
 4. Use `bundle exec guard` to automatically have tests run as you make changes.
 5. Make your changes.
+
+## What is Chikuwa?
+
+Chikuwa is my family❤️
+![chikuwa-photo](https://user-images.githubusercontent.com/3221619/173847362-e4cb1bd4-1b18-4ef9-abc6-fa061c215e81.png)
