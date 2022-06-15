@@ -1,4 +1,4 @@
-Copyright (c) 2022 watanavex <y_watanabe@yumemi.co.jp>
+Copyright (c) 2022 watanavex <watanave.tech@gmail.com>
 
 MIT License
 
