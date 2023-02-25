@@ -58,11 +58,23 @@ module Danger
           next
         end
 
-        file = Pathname(logs[1].strip).relative_path_from(_project_root).to_s
-        line_num = /(\d+)/.match(logs[2].strip).to_a[0].to_i
-        logs.shift(3)
-        message = logs.join(":").strip!
-
+        path = [logs[1], logs[2]].join(":").strip
+        case path
+        when %r{^file:///.*}
+          # kotlin 1.8 or later
+          file = Pathname(logs[2].gsub(%r{^//}, "")).relative_path_from(_project_root).to_s
+          line_num = logs[3].to_i
+          logs.shift(4)
+          message = logs.join(":").gsub(/^(\d+)\w/, "").strip!
+        when %r{^/.*: \(\d+, \d+\)$}
+          # kotlin 1.7 or earlier
+          file = Pathname(logs[1].strip).relative_path_from(_project_root).to_s
+          line_num = /(\d+)/.match(logs[2].strip).to_a[0].to_i
+          logs.shift(3)
+          message = logs.join(":").strip!
+        else
+          next
+        end
         report_data.push(ReportData.new(message, type, file, line_num))
       end
 
