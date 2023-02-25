@@ -25,8 +25,8 @@ module Danger
       it "Report" do
         file_path = "#{File.dirname(__FILE__)}/fixtures/build.log"
         @my_plugin.report file_path
-        expect(@dangerfile.status_report[:warnings]).to eq(["Parameter 'context' is never used, could be renamed to _"])
-        expect(@dangerfile.status_report[:errors]).to eq(["Unresolved reference: chikuwa"])
+        expect(@dangerfile.status_report[:warnings]).to eq(["Parameter 'context' is never used, could be renamed to _", "This is Kotlin 1.8 style message. Parameter 'context' is never used, could be renamed to _"])
+        expect(@dangerfile.status_report[:errors]).to eq(["Unresolved reference: chikuwa", "This is Kotlin 1.8 style message. Unresolved reference: chikuwa"])
       end
     end
   end
