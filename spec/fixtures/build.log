@@ -42,6 +42,8 @@
 > Task :app:compileDebugKotlin
 w: /private/tmp/chikuwa/app/src/main/java/tech/watanave/sample/chikuwa/MainActivity.kt: (23, 46): Parameter 'context' is never used, could be renamed to _
 e: /private/tmp/chikuwa/app/src/main/java/tech/watanave/sample/chikuwa/MainActivity.kt: (40, 14): Unresolved reference: chikuwa
+w: file:///private/tmp/chikuwa/app/src/main/java/tech/watanave/sample/chikuwa/MainActivity.kt:23:46 This is Kotlin 1.8 style message. Parameter 'context' is never used, could be renamed to _
+e: file:///private/tmp/chikuwa/app/src/main/java/tech/watanave/sample/chikuwa/MainActivity.kt:40:14 This is Kotlin 1.8 style message. Unresolved reference: chikuwa
 
 > Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
